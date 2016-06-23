@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var maxName = 0;
+            var socket = io();
+            var myId = -1;
+            socket.emit('identity');
+            socket.on('identity', function(msg)
+            {
+                if(myId == -1)
+                {
+                    myId = msg;
+                }
+            });
+            document.addEventListener("keydown", function(event)
+            {
+                if(event.key == "Enter")
+                {
+                    socket.emit('tempMessage', myId + "\n" +
+                        document.getElementById("m").value);
+                    document.getElementById("m").value = "";
+                    myId = -1;
+                    socket.emit('identity');
+                }
+            });
+            document.addEventListener("input", function()
+            {
+                socket.emit('tempMessage', myId + "\n" +
+                    document.getElementById("m").value);
+            });
+            socket.on('tempMessage', function(msg)
+            {
+                realName = +msg.substr(0, msg.indexOf("\n"));
+                realMsg = msg.substr(msg.indexOf("\n") + 1);
+                console.log(realName);
+                console.log(maxName);
+                if(realName > maxName)
+                {
+                    for(var i = 99;
+                        i > realName - maxName - 1; i -= 1)
+                    {
+                    var temp = realName + maxName;
+                        document.getElementById("t" + i).innerHTML =
+                            document.getElementById("t" + 
+                            (i - realName + maxName)).innerHTML;
+                    }
+                    for(var ii = realName - maxName - 1; ii >= 0; ii -= 1)
+                    {
+                        document.getElementById("t" + ii).innerHTML = "";
+                    }
+                    maxName = realName;
+                }
+                document.getElementById("t" + (maxName -
+                    realName)).innerHTML = realMsg;
+            });
+        </script>
+    </head>
+    <body>
+        <input id="m" autocomplete="off" />
+        <hr>
+        <ul id="u"></ul>
+        <script>
+            for(var j = 0; j < 100; j += 1)
+            {
+                document.getElementById("u").innerHTML += '<li id="t' + j +
+                    '"></li>';
+            }
+        </script>
+    </body>
+</html>

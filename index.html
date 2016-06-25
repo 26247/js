@@ -1,17 +1,19 @@
 <!doctype html>
 <html>
     <head>
-        <script src="/socket.io/socket.io.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
         <script>
             var maxName = 0;
             var socket = io();
             var myId = -1;
-            socket.emit('identity');
+            var typingFlag = 0;
             socket.on('identity', function(msg)
             {
-                if(myId == -1)
+                if(myId == -1 && typingFlag == 1)
                 {
                     myId = msg;
+                    socket.emit('tempMessage', myId + "\n" +
+                        document.getElementById("m").value);
                 }
             });
             document.addEventListener("keypress", function(event)
@@ -22,26 +24,31 @@
                         document.getElementById("m").value);
                     document.getElementById("m").value = "";
                     myId = -1;
-                    socket.emit('identity');
+                    typingFlag = 0;
                 }
             });
             document.addEventListener("input", function()
             {
-                socket.emit('tempMessage', myId + "\n" +
-                    document.getElementById("m").value);
+                if(typingFlag == 0)
+                {
+                    socket.emit('identity');
+                    typingFlag = 1;
+                }
+                else
+                {
+                    socket.emit('tempMessage', myId + "\n" +
+                        document.getElementById("m").value);
+                } 
             });
             socket.on('tempMessage', function(msg)
             {
                 realName = +msg.substr(0, msg.indexOf("\n"));
                 realMsg = msg.substr(msg.indexOf("\n") + 1);
-                console.log(realName);
-                console.log(maxName);
                 if(realName > maxName)
                 {
-                    for(var i = 99;
-                        i > realName - maxName - 1; i -= 1)
+                    for(var i = 99; i > realName - maxName - 1; i -= 1)
                     {
-                    var temp = realName + maxName;
+                        var temp = realName + maxName;
                         document.getElementById("t" + i).innerHTML =
                             document.getElementById("t" + 
                             (i - realName + maxName)).innerHTML;
@@ -60,7 +67,7 @@
     <body>
         <input id="m" autocomplete="off" />
         <hr>
-        <ul id="u"></ul>
+        <ol id="u"></ol>
         <script>
             for(var j = 0; j < 100; j += 1)
             {

@@ -24,7 +24,4 @@ io.on('connection', function(socket)
     });
 });
 
-http.listen(26247, function()
-{
-    console.log('On port 26247');
-});
+http.listen(26247);

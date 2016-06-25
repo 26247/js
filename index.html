@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-	<script src="/socket.io/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
         <script>
             var maxName = 0;
             var socket = io();
@@ -34,7 +34,7 @@
                     socket.emit('identity');
                     typingFlag = 1;
                 }
-                else
+                else if(myId != -1)
                 {
                     socket.emit('tempMessage', myId + "\n" +
                         document.getElementById("m").value);

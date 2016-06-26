@@ -1,12 +1,13 @@
 <!doctype html>
 <html>
     <head>
-    <script src="/socket.io/socket.io.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
         <script>
             var maxName = 0;
             var socket = io();
             var myId = -1;
             var typingFlag = 0;
+            socket.emit('getAllMessage');
             socket.on('identity', function(msg)
             {
                 if(myId == -1 && typingFlag == 1)

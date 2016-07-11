@@ -21,8 +21,8 @@
             {
                 if(event.key == "Enter")
                 {
-                    socket.emit('tempMessage', myId + "\n" +
-                        document.getElementById("m").value);
+                    socket.emit('tempMessage', myId + "\n" + "<b>" +
+                        document.getElementById("m").value) + "</b>";
                     document.getElementById("m").value = "";
                     myId = -1;
                     typingFlag = 0;

@@ -14,7 +14,17 @@ app.get('/', function(req, res)
     res.sendFile(__dirname + "/index.html");
 });
 
-nameNumber = 0;
+client.get("nowNumber", function(err, reply)
+{
+    if(reply == null)
+    {
+        nameNumber = 0;
+    }
+    else
+    {
+        nameNumber = +reply;
+    }
+});
 
 io.on('connection', function(socket)
 {
@@ -22,6 +32,8 @@ io.on('connection', function(socket)
     {
         io.emit('identity', nameNumber);
         nameNumber += 1;
+        client.set("nowNumber", nameNumber);
+        console.log(nameNumber);
     });
     socket.on('tempMessage', function(msg)
     {
